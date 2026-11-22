@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SalonBook Client
 
-## Getting Started
+Frontend web application for **SalonBook**, a salon appointment booking and beauty service platform. Built with Next.js App Router and TypeScript, it provides service browsing, category exploration, authentication and session synchronization, role-based dashboards (`client` and `admin`), dark mode support, and Stripe payment flows.
 
-First, run the development server:
+## Important Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Service Discovery & Category Browsing:** Explore salon treatments, filter by category (such as Haircut & Styling, Hair Coloring, Hair Treatment, Facial & Skincare, Makeup, Manicure & Pedicure, and Spa & Massage), and view featured services on the landing page.
+- **Authentication, Google OAuth & Session Sync:** Supports credential sign-in/sign-up and Google sign-in via Better Auth, `/auth/callback` handling without login-page flash, and backend JWT cookie synchronization (`salonbook_token`).
+- **Role-Based Dashboards & Profile Controls:** Dedicated `/dashboard/client` and `/dashboard/admin` routes, profile management, and blocked-account handling.
+- **Responsive Navigation & Dark Mode (FOUC-Free):** Responsive `Navbar` with user avatar badge, dropdown/mobile menus, and a persistent light/dark theme toggle initialized early in `RootLayout` to prevent flash of unstyled content.
+- **Stripe Checkout & Payment Status Views:** Seamless redirect into Stripe Checkout for confirmed appointments and dedicated `/payment/success` and `/payment/cancel` pages.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technology Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework & Language:** Next.js (App Router), React, TypeScript
+- **Authentication:** Better Auth (`@/lib/auth-client`) + `httpOnly` JWT cookie session sync with the Express backend
+- **Payments:** Stripe (`@stripe/stripe-js` / Stripe Checkout flow)
+- **Styling & UI:** Tailwind CSS, `lucide-react` icons, custom toast notifications
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation Instructions
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the client repository and navigate into the project directory:
+   ```bash
+   git clone <https://github.com/hmmahbubrabbani/salonbook-client.git>
+   cd salonbook-client
