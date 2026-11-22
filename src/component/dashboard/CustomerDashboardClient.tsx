@@ -148,23 +148,23 @@ export function CustomerDashboardClient({
     }
   }
 
-  async function handlePayNow(appointmentId: string) {
+  async function handlePayNow(appointmentId: string){
     setPayingId(appointmentId);
     try {
-      const res = await fetch(getApiUrl('/api/v1/payments/checkout'), {
+      const res = await fetch(getApiUrl('/api/v1/payments/checkout'),{
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ appointmentId }),
       });
 
-      if (res.status === 401) {
+      if (res.status === 401){
         window.location.replace('/login?callbackUrl=%2Fdashboard%2Fclient');
         return;
       }
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) {
+      if (!res.ok || !data.url){
         throw new Error(data.message || 'Could not start Stripe Checkout.');
       }
 
