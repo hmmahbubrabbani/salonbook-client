@@ -8,7 +8,7 @@ import { signIn, signUp, authClient } from '@/lib/auth-client';
 import { checkPasswordRules } from '@/lib/password';
 import { toast } from '@/hooks/use-toast';
 
-function getApiUrl(path: string) {
+function getApiUrl(path: string){
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}${path}` : path;
 }
@@ -34,7 +34,7 @@ function SignUpContent() {
   const hasLower = /[a-z]/.test(password);
   const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
 
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>){
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -60,11 +60,11 @@ function SignUpContent() {
         description: 'Your image URL has been attached.',
         variant: 'success',
       });
-    } catch (err) {
+    } catch (err){
       const msg = (err as Error).message || 'Image upload failed.';
       setErrorMsg(msg);
       toast({ title: 'Upload failed', description: msg, variant: 'destructive' });
-    } finally {
+    } finally{
       setUploading(false);
     }
   }
@@ -77,7 +77,7 @@ function SignUpContent() {
     setSuccessMsg(null);
 
     const ruleError = checkPasswordRules(password);
-    if (ruleError) {
+    if (ruleError){
       setErrorMsg(ruleError);
       toast({ title: 'Weak password', description: ruleError, variant: 'destructive' });
       return;
@@ -127,7 +127,7 @@ function SignUpContent() {
         })
         .catch(() => ({ error: { message: 'Sign up sync failed' } }));
 
-      if (baSignUp?.error) {
+      if (baSignUp?.error){
         await signIn.email({ email: cleanEmail, password }).catch(() => {});
       }
 
