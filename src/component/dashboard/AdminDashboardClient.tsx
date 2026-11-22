@@ -372,7 +372,7 @@ export function AdminDashboardClient({
         variant: 'success',
       });
       await loadAllAdminData(false);
-    } catch (err) {
+    } catch (err){
       toast({
         title: 'Action failed',
         description: (err as Error).message,
@@ -404,7 +404,7 @@ export function AdminDashboardClient({
     }
   }
 
-  async function handleAppointmentDecision(id: string, status: 'Confirmed' | 'Cancelled') {
+  async function handleAppointmentDecision(id: string, status: 'Confirmed' | 'Cancelled'){
     try {
       const res = await fetch(getApiUrl(`/api/v1/appointments/${encodeURIComponent(id)}`), {
         method: 'PATCH',
@@ -536,7 +536,7 @@ export function AdminDashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {services.map((svc) => (
+                {services.map((svc) =>(
                   <tr key={svc._id} className="border-b last:border-0">
                     <td className="p-3 font-medium">{svc.title}</td>
                     <td className="p-3">{svc.category}</td>
@@ -734,7 +734,7 @@ export function AdminDashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {appointments.map((appt) => (
+                {appointments.map((appt) =>(
                   <tr key={appt._id} className="border-b last:border-0">
                     <td className="p-3">
                       <p className="font-medium">{appt.customerName}</p>
@@ -824,7 +824,7 @@ export function AdminDashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {customers.map((cust) => (
+                {customers.map((cust) =>(
                   <tr key={cust._id} className="border-b last:border-0">
                     <td className="p-3 font-medium">{cust.name}</td>
                     <td className="p-3">{cust.email}</td>
