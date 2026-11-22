@@ -32,7 +32,7 @@ const ADMIN_NAV: SidebarNavItem[] = [
   },
 ];
 
-async function DashboardSidebarSection() {
+async function DashboardSidebarSection(){
   const user = await getServerAuthUser();
 
   if (!user || user.isBlocked) {
@@ -58,7 +58,7 @@ async function DashboardSidebarSection() {
   );
 }
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }){
   return (
     <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col md:flex-row">
       <Suspense
