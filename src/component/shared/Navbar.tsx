@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   ChevronDown,
   LayoutDashboard,
@@ -15,7 +16,7 @@ import {
 import { useSession, signOut } from '@/lib/auth-client';
 import { toast } from '@/hooks/use-toast';
 
-interface SessionUserWithMeta{
+interface SessionUserWithMeta {
   id?: string;
   _id?: string;
   name: string;
@@ -30,12 +31,12 @@ type ThemeMode = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'salonbook-theme';
 
-function getApiUrl(path: string){
+function getApiUrl(path: string) {
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}${path}` : path;
 }
 
-function getUserAvatar(user: SessionUserWithMeta | null | undefined){
+function getUserAvatar(user: SessionUserWithMeta | null | undefined) {
   return String(user?.avatarUrl || user?.image || '').trim();
 }
 
@@ -95,7 +96,7 @@ function UserAvatarBadge({
     setImgFailed(false);
   }, [avatarSrc]);
 
-  if (avatarSrc && !imgFailed){
+  if (avatarSrc && !imgFailed) {
     return (
       <img
         src={avatarSrc}
@@ -115,7 +116,77 @@ function UserAvatarBadge({
   );
 }
 
-export function Navbar(){
+function ActiveNavLink({
+  href,
+  label,
+  onClick,
+  mobile = false,
+}: {
+  href: string;
+  label: string;
+  onClick: () => void;
+  mobile?: boolean;
+}) {
+  const pathname = usePathname();
+  const isActive =
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
+
+  if (mobile) {
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        className={`block py-1.5 transition-colors ${
+          isActive ? 'font-semibold text-primary' : 'text-foreground hover:text-primary'
+        }`}
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`py-1 transition-colors ${
+        isActive ? 'font-semibold text-primary' : 'text-foreground hover:text-primary'
+      }`}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function NavLinkItem({
+  href,
+  label,
+  onClick,
+  mobile = false,
+}: {
+  href: string;
+  label: string;
+  onClick: () => void;
+  mobile?: boolean;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <Link
+          href={href}
+          onClick={onClick}
+          className={mobile ? 'block py-1.5' : 'py-1 transition-colors hover:text-primary'}
+        >
+          {label}
+        </Link>
+      }
+    >
+      <ActiveNavLink href={href} label={label} onClick={onClick} mobile={mobile} />
+    </Suspense>
+  );
+}
+
+export function Navbar() {
   const { data: session, isPending } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -275,13 +346,13 @@ export function Navbar(){
         credentials: 'include',
       });
     } catch {
-      
+      // Ignore logout network error
     }
 
     try {
       await signOut();
     } catch {
-      
+      // Ignore Better Auth signOut error
     }
 
     toast({
@@ -307,26 +378,12 @@ export function Navbar(){
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-5 text-sm font-medium md:flex">
-          <Link href="/" onClick={closeMenus} className="transition-colors hover:text-primary">
-            Home
-          </Link>
-          <Link
-            href="/services"
-            onClick={closeMenus}
-            className="transition-colors hover:text-primary"
-          >
-            Browse Services
-          </Link>
+          <NavLinkItem href="/" label="Home" onClick={closeMenus} />
+          <NavLinkItem href="/services" label="Browse Services" onClick={closeMenus} />
 
           {!showAuthLoading && !user && (
             <>
-              <Link
-                href="/login"
-                onClick={closeMenus}
-                className="transition-colors hover:text-primary"
-              >
-                Sign In
-              </Link>
+              <NavLinkItem href="/login" label="Sign In" onClick={closeMenus} />
               <Link
                 href="/signup"
                 onClick={closeMenus}
@@ -339,13 +396,7 @@ export function Navbar(){
 
           {!showAuthLoading && user && (
             <>
-              <Link
-                href={dashboardHref}
-                onClick={closeMenus}
-                className="transition-colors hover:text-primary"
-              >
-                Dashboard
-              </Link>
+              <NavLinkItem href={dashboardHref} label="Dashboard" onClick={closeMenus} />
 
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -409,18 +460,12 @@ export function Navbar(){
       {/* Mobile Drawer */}
       {mobileOpen && (
         <div className="space-y-2 border-t bg-background px-4 py-4 text-sm md:hidden">
-          <Link href="/" onClick={closeMenus} className="block py-1.5">
-            Home
-          </Link>
-          <Link href="/services" onClick={closeMenus} className="block py-1.5">
-            Browse Services
-          </Link>
+          <NavLinkItem href="/" label="Home" onClick={closeMenus} mobile />
+          <NavLinkItem href="/services" label="Browse Services" onClick={closeMenus} mobile />
 
           {!showAuthLoading && !user ? (
             <div className="flex flex-col gap-2 pt-2">
-              <Link href="/login" onClick={closeMenus} className="py-1.5">
-                Sign In
-              </Link>
+              <NavLinkItem href="/login" label="Sign In" onClick={closeMenus} mobile />
               <Link
                 href="/signup"
                 onClick={closeMenus}
@@ -437,9 +482,7 @@ export function Navbar(){
                   <UserAvatarBadge user={user} sizeClass="h-7 w-7 text-xs" />
                   <p className="text-xs font-medium text-foreground">{user.name}</p>
                 </div>
-                <Link href={dashboardHref} onClick={closeMenus} className="block py-1.5">
-                  Dashboard
-                </Link>
+                <NavLinkItem href={dashboardHref} label="Dashboard" onClick={closeMenus} mobile />
                 <button
                   type="button"
                   onClick={handleLogout}
