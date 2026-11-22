@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Clock } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
-export interface SalonService {
+export interface SalonService{
   _id: string;
   title: string;
   description: string;
@@ -20,16 +20,16 @@ export interface SalonService {
 const PLACEHOLDER_IMG =
   'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=80';
 
-function getServicesEndpoint() {
+function getServicesEndpoint(){
   const baseUrl = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return baseUrl ? `${baseUrl}/api/v1/services` : '/api/v1/services';
 }
 
-export function FeaturedServicesSection() {
+export function FeaturedServicesSection(){
   const [services, setServices] = useState<SalonService[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(() =>{
     let active = true;
 
     fetch(getServicesEndpoint(), {
@@ -37,7 +37,7 @@ export function FeaturedServicesSection() {
       credentials: 'include',
       cache: 'no-store',
     })
-      .then(async (res) => {
+      .then(async (res) =>{
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           throw new Error(data.message || 'Failed to load services from SalonBook server');
@@ -53,11 +53,11 @@ export function FeaturedServicesSection() {
             priceCents: Number(s.priceCents) || 0,
           }));
 
-        if (active) {
+        if (active){
           setServices(activeOnly.slice(0, 6));
         }
       })
-      .catch((err: Error) => {
+      .catch((err: Error) =>{
         if (!active) return;
         toast({
           title: 'Could not load featured services',
@@ -65,11 +65,11 @@ export function FeaturedServicesSection() {
           variant: 'destructive',
         });
       })
-      .finally(() => {
+      .finally(() =>{
         if (active) setLoading(false);
       });
 
-    return () => {
+    return () =>{
       active = false;
     };
   }, []);
@@ -106,7 +106,7 @@ export function FeaturedServicesSection() {
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => (
+          {services.map((service) =>(
             <article
               key={service._id}
               className="group flex flex-col justify-between overflow-hidden rounded-xl border bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
