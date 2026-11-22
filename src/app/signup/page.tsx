@@ -117,7 +117,15 @@ function SignUpContent() {
         return;
       }
 
-      // 2) Keep Better Auth client session in sync
+      // 2) Mirror salonbook_token onto this origin so dashboard server components can see it
+      await fetch('/api/auth/session-cookie', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: apiData.token }),
+        cache: 'no-store',
+      }).catch(() => {});
+
+      // 3) Keep Better Auth client session in sync
       const baSignUp = await signUp
         .email({
           name: cleanName,

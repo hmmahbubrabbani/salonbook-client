@@ -41,6 +41,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     await apiRequest('/auth/logout', { method: 'POST' }).catch(() => {});
+    await fetch('/api/auth/session-cookie', {
+      method: 'DELETE',
+      cache: 'no-store',
+    }).catch(() => {});
     setUser(null);
   }, []);
 

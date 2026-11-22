@@ -17,10 +17,38 @@ function resolveDestination(role: UserRole, callbackUrl: string) {
   if (role === 'admin') {
     return '/dashboard/admin';
   }
-  if (!callbackUrl.startsWith('/') || callbackUrl.startsWith('/dashboard/admin')) {
+  // Never redirect back to an auth page — that would create a refresh loop.
+  const unsafeCallback =
+    !callbackUrl.startsWith('/') ||
+    callbackUrl.startsWith('/dashboard/admin') ||
+    callbackUrl.startsWith('/login') ||
+    callbackUrl.startsWith('/signup');
+  if (unsafeCallback) {
     return '/dashboard/client';
   }
   return callbackUrl;
+}
+
+/**
+ * Mirror salonbook_token onto this (Next.js) origin so server components can see it.
+ * Returns false when the cookie was NOT set — callers must not redirect in that case,
+ * otherwise the dashboard bounces back to /login forever (refresh loop).
+ */
+async function syncFrontendSessionCookie(token?: string): Promise<boolean> {
+  if (!token) return false;
+  try {
+    const res = await fetch('/api/auth/session-cookie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+      cache: 'no-store',
+    });
+    if (!res.ok) return false;
+    const data = await res.json().catch(() => null);
+    return Boolean(data?.success);
+  } catch {
+    return false;
+  }
 }
 
 function LoginContent() {
@@ -62,6 +90,13 @@ function LoginContent() {
         if (res.ok) {
           const data = await res.json().catch(() => null);
           if (data?.success && data?.user && !data.user.isBlocked) {
+            const synced = await syncFrontendSessionCookie(data.token);
+            if (!synced) {
+              // Cookie not set -> dashboard would redirect straight back here.
+              console.warn('[Login] session-cookie sync failed, staying on login form');
+              setErrorMsg('Your session could not be restored. Please sign in again.');
+              return;
+            }
             const role = String(data.user.role || 'client').toLowerCase() as UserRole;
             setRedirecting(true);
             window.location.replace(resolveDestination(role, callbackUrl));
@@ -87,6 +122,12 @@ function LoginContent() {
           if (syncRes.ok) {
             const syncData = await syncRes.json().catch(() => null);
             if (syncData?.success && syncData?.user && !syncData.user.isBlocked) {
+              const synced = await syncFrontendSessionCookie(syncData.token);
+              if (!synced) {
+                console.warn('[Login] session-cookie sync failed, staying on login form');
+                setErrorMsg('Your session could not be restored. Please sign in again.');
+                return;
+              }
               const role = String(syncData.user.role || 'client').toLowerCase() as UserRole;
               setRedirecting(true);
               window.location.replace(resolveDestination(role, callbackUrl));
@@ -127,7 +168,7 @@ function LoginContent() {
     try {
       const cleanEmail = email.trim().toLowerCase();
 
-      // 1) Authenticate with salonbook-server (sets salonbook_token cookie)
+      // 1) Authenticate with salonbook-server (sets salonbook_token cookie & returns token)
       const apiRes = await fetch(getApiUrl('/api/v1/auth/login'), {
         method: 'POST',
         credentials: 'include',
@@ -139,6 +180,7 @@ function LoginContent() {
       if (!apiRes.ok || !apiData?.success || !apiData?.user) {
         if (apiRes.status === 403) {
           await signOut().catch(() => {});
+          await fetch('/api/auth/session-cookie', { method: 'DELETE' }).catch(() => {});
         }
         const msg = apiData?.message || 'Invalid email or password.';
         setErrorMsg(msg);
@@ -147,7 +189,18 @@ function LoginContent() {
         return;
       }
 
-      // 2) Keep Better Auth session in sync; if user wasn't in Better Auth yet, create it cleanly
+      // 2) Set salonbook_token on the Next.js frontend domain so Server Components (getServerAuthUser) see it
+      const synced = await syncFrontendSessionCookie(apiData.token);
+      if (!synced) {
+        const msg =
+          'Signed in, but your session could not be started on this site. Please try again.';
+        setErrorMsg(msg);
+        toast({ title: 'Sign in failed', description: msg, variant: 'destructive' });
+        setSubmitting(false);
+        return;
+      }
+
+      // 3) Keep Better Auth session in sync
       const baSignIn = await signIn
         .email({ email: cleanEmail, password })
         .catch(() => ({ error: { message: 'Session sync failed' } }));

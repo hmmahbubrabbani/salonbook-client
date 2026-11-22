@@ -7,7 +7,7 @@ async function DashboardRoleRedirect() {
   const user = await getServerAuthUser();
 
   if (!user) {
-    redirect('/login?callbackUrl=%2Fdashboard');
+    redirect('/login?callbackUrl=%2Fdashboard%2Fclient');
   }
 
   redirect(user.role === 'admin' ? '/dashboard/admin' : '/dashboard/client');
