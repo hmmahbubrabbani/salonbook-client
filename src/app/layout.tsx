@@ -24,11 +24,11 @@ const themeInitScript = `
   } catch (e) {}
 `;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }){
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }}/>
       </head>
       <body
         suppressHydrationWarning
