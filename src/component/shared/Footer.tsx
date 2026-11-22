@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Clock, Mail, MapPin, Phone, Scissors } from 'lucide-react';
 
-function InstagramIcon({ className = 'h-4 w-4' }: { className?: string }) {
+function InstagramIcon({ className = 'h-4 w-4' }: { className?: string }){
   return (
     <svg
       viewBox="0 0 24 24"
@@ -20,7 +20,7 @@ function InstagramIcon({ className = 'h-4 w-4' }: { className?: string }) {
   );
 }
 
-function YouTubeIcon({ className = 'h-4 w-4' }: { className?: string }) {
+function YouTubeIcon({ className = 'h-4 w-4' }: { className?: string }){
   return (
     <svg
       viewBox="0 0 24 24"
@@ -33,7 +33,7 @@ function YouTubeIcon({ className = 'h-4 w-4' }: { className?: string }) {
   );
 }
 
-function FacebookIcon({ className = 'h-4 w-4' }: { className?: string }) {
+function FacebookIcon({ className = 'h-4 w-4' }: { className?: string }){
   return (
     <svg
       viewBox="0 0 24 24"
