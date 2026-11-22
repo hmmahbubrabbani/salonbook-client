@@ -33,7 +33,7 @@ const VALID_ADMIN_TABS: AdminTab[] = [
   'profile',
 ];
 
-function getApiUrl(path: string) {
+function getApiUrl(path: string){
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}${path}` : path;
 }
@@ -75,11 +75,11 @@ export function AdminDashboardClient({
   const [uploadingImg, setUploadingImg] = useState(false);
   const [savingService, setSavingService] = useState(false);
 
-  useEffect(() => {
+  useEffect(() =>{
     setUser(initialUser);
   }, [initialUser]);
 
-  useEffect(() => {
+  useEffect(() =>{
     setTab(normalizeAdminTab(activeTab));
   }, [activeTab]);
 
@@ -106,7 +106,7 @@ export function AdminDashboardClient({
 
         if (handleAuthFailure(meRes.status)) return;
 
-        if (meRes.ok) {
+        if (meRes.ok){
           const meData = await meRes.json().catch(() => ({}));
           if (meData?.user) {
             setUser((prev) => ({
@@ -117,7 +117,7 @@ export function AdminDashboardClient({
           }
         }
 
-        if (svcRes.ok) {
+        if (svcRes.ok){
           const svcData = await svcRes.json().catch(() => ({}));
           const list = Array.isArray(svcData.services) ? (svcData.services as Service[]) : [];
           setServices(
@@ -130,7 +130,7 @@ export function AdminDashboardClient({
           );
         }
 
-        if (apptRes.ok) {
+        if (apptRes.ok){
           const apptData = await apptRes.json().catch(() => ({}));
           const rawAppts = Array.isArray(apptData.appointments)
             ? (apptData.appointments as Appointment[])
@@ -185,7 +185,7 @@ export function AdminDashboardClient({
     [handleAuthFailure]
   );
 
-  useEffect(() => {
+  useEffect(() =>{
     loadAllAdminData(true);
   }, [loadAllAdminData]);
 
@@ -214,12 +214,12 @@ export function AdminDashboardClient({
     setIsActive(true);
   }
 
-  function openNewServiceTab() {
+  function openNewServiceTab(){
     resetServiceForm();
     handleSelectTab('add-service');
   }
 
-  function startEditService(svc: Service) {
+  function startEditService(svc: Service){
     setEditingServiceId(svc._id);
     setTitle(svc.title);
     setCategory(svc.category);
@@ -231,7 +231,7 @@ export function AdminDashboardClient({
     handleSelectTab('add-service');
   }
 
-  async function handleServiceImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleServiceImageUpload(e: React.ChangeEvent<HTMLInputElement>){
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -275,7 +275,7 @@ export function AdminDashboardClient({
     const numericPrice = parseFloat(priceDollars);
     const numericDuration = parseInt(durationMinutes, 10);
 
-    if (!title.trim()) {
+    if (!title.trim()){
       toast({
         title: 'Title required',
         description: 'Please enter a service name.',
@@ -349,7 +349,7 @@ export function AdminDashboardClient({
         description: (err as Error).message,
         variant: 'destructive',
       });
-    } finally {
+    } finally{
       setSavingService(false);
     }
   }
