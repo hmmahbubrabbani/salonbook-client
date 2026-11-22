@@ -5,7 +5,11 @@ import { Loader2 } from 'lucide-react';
 import { auth } from '@/lib/auth';
 import { getServerAuthUser } from '@/lib/server-auth';
 
-const SERVER_URL = (process.env.NEXT_PUBLIC_API_URL as string).replace(/\/$/, '');
+const SERVER_URL = (
+  process.env.NEXT_PUBLIC_API_URL || 'https://salonbook-backend-rho.vercel.app'
+)
+  .trim()
+  .replace(/\/$/, '');
 
 async function AuthCallbackResolver({
   searchParams,
@@ -37,7 +41,10 @@ async function AuthCallbackResolver({
   try {
     const reqHeaders = await headers();
     const cookieStore = await cookies();
-    const cookieHeader = reqHeaders.get('cookie') || cookieStore.toString();
+    const allCookies = cookieStore.getAll();
+    const cookieHeader =
+      reqHeaders.get('cookie') ||
+      allCookies.map((c) => `${c.name}=${c.value}`).join('; ');
 
     const syncRes = await fetch(`${SERVER_URL}/api/v1/auth/sync-session`, {
       method: 'POST',
@@ -56,15 +63,18 @@ async function AuthCallbackResolver({
         if (match?.[1]) {
           cookieStore.set('salonbook_token', match[1], {
             httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             path: '/',
             maxAge: 7 * 24 * 60 * 60,
           });
         }
       }
+    } else {
+      console.error('[AuthCallback] sync-session failed with status:', syncRes.status);
     }
-  } catch {
-    // Continue even if sync call fails
+  } catch (err) {
+    console.error('[AuthCallback] sync-session error:', err);
   }
 
   if (user.role === 'admin') {

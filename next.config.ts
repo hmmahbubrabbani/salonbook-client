@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
-const serverUrl = (process.env.NEXT_PUBLIC_API_URL as string).replace(/\/$/, "");
+const serverUrl = (
+  process.env.NEXT_PUBLIC_API_URL || "https://salonbook-backend-rho.vercel.app"
+)
+  .trim()
+  .replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
