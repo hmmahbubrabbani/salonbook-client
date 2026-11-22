@@ -45,7 +45,7 @@ export function CustomerDashboardClient({
         cache: 'no-store',
       });
 
-      if (res.status === 401) {
+      if (res.status === 401){
         window.location.replace('/login?callbackUrl=%2Fdashboard%2Fclient');
         return;
       }
@@ -54,12 +54,12 @@ export function CustomerDashboardClient({
       if (res.ok && data?.success && data?.user) {
         setUser((prev) => ({ ...prev, ...data.user, _id: String(data.user._id || prev._id) }));
       }
-    } catch {
+    } catch{
       // Keep initialUser if transient network error occurs
     }
   }, []);
 
-  const fetchAppointments = useCallback(async () => {
+  const fetchAppointments = useCallback(async () =>{
     setLoading(true);
     try {
       const res = await fetch(getApiUrl('/api/v1/appointments'), {
@@ -68,7 +68,7 @@ export function CustomerDashboardClient({
         cache: 'no-store',
       });
 
-      if (res.status === 401) {
+      if (res.status === 401){
         window.location.replace('/login?callbackUrl=%2Fdashboard%2Fclient');
         return;
       }
@@ -113,7 +113,7 @@ export function CustomerDashboardClient({
     router.refresh();
   }
 
-  async function handleCancelPending(id: string) {
+  async function handleCancelPending(id: string){
     setCancellingId(id);
     try {
       const res = await fetch(getApiUrl(`/api/v1/appointments/${encodeURIComponent(id)}`), {
