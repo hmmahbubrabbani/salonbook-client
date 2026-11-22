@@ -33,7 +33,7 @@ const VALID_ADMIN_TABS: AdminTab[] = [
   'profile',
 ];
 
-function getApiUrl(path: string){
+function getApiUrl(path: string) {
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}${path}` : path;
 }
@@ -75,11 +75,11 @@ export function AdminDashboardClient({
   const [uploadingImg, setUploadingImg] = useState(false);
   const [savingService, setSavingService] = useState(false);
 
-  useEffect(() =>{
+  useEffect(() => {
     setUser(initialUser);
   }, [initialUser]);
 
-  useEffect(() =>{
+  useEffect(() => {
     setTab(normalizeAdminTab(activeTab));
   }, [activeTab]);
 
@@ -106,7 +106,7 @@ export function AdminDashboardClient({
 
         if (handleAuthFailure(meRes.status)) return;
 
-        if (meRes.ok){
+        if (meRes.ok) {
           const meData = await meRes.json().catch(() => ({}));
           if (meData?.user) {
             setUser((prev) => ({
@@ -117,7 +117,7 @@ export function AdminDashboardClient({
           }
         }
 
-        if (svcRes.ok){
+        if (svcRes.ok) {
           const svcData = await svcRes.json().catch(() => ({}));
           const list = Array.isArray(svcData.services) ? (svcData.services as Service[]) : [];
           setServices(
@@ -130,7 +130,7 @@ export function AdminDashboardClient({
           );
         }
 
-        if (apptRes.ok){
+        if (apptRes.ok) {
           const apptData = await apptRes.json().catch(() => ({}));
           const rawAppts = Array.isArray(apptData.appointments)
             ? (apptData.appointments as Appointment[])
@@ -185,7 +185,7 @@ export function AdminDashboardClient({
     [handleAuthFailure]
   );
 
-  useEffect(() =>{
+  useEffect(() => {
     loadAllAdminData(true);
   }, [loadAllAdminData]);
 
@@ -214,12 +214,12 @@ export function AdminDashboardClient({
     setIsActive(true);
   }
 
-  function openNewServiceTab(){
+  function openNewServiceTab() {
     resetServiceForm();
     handleSelectTab('add-service');
   }
 
-  function startEditService(svc: Service){
+  function startEditService(svc: Service) {
     setEditingServiceId(svc._id);
     setTitle(svc.title);
     setCategory(svc.category);
@@ -231,7 +231,7 @@ export function AdminDashboardClient({
     handleSelectTab('add-service');
   }
 
-  async function handleServiceImageUpload(e: React.ChangeEvent<HTMLInputElement>){
+  async function handleServiceImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -275,7 +275,7 @@ export function AdminDashboardClient({
     const numericPrice = parseFloat(priceDollars);
     const numericDuration = parseInt(durationMinutes, 10);
 
-    if (!title.trim()){
+    if (!title.trim()) {
       toast({
         title: 'Title required',
         description: 'Please enter a service name.',
@@ -349,7 +349,7 @@ export function AdminDashboardClient({
         description: (err as Error).message,
         variant: 'destructive',
       });
-    } finally{
+    } finally {
       setSavingService(false);
     }
   }
@@ -372,7 +372,7 @@ export function AdminDashboardClient({
         variant: 'success',
       });
       await loadAllAdminData(false);
-    } catch (err){
+    } catch (err) {
       toast({
         title: 'Action failed',
         description: (err as Error).message,
@@ -404,7 +404,7 @@ export function AdminDashboardClient({
     }
   }
 
-  async function handleAppointmentDecision(id: string, status: 'Confirmed' | 'Cancelled'){
+  async function handleAppointmentDecision(id: string, status: 'Confirmed' | 'Cancelled') {
     try {
       const res = await fetch(getApiUrl(`/api/v1/appointments/${encodeURIComponent(id)}`), {
         method: 'PATCH',
@@ -536,7 +536,7 @@ export function AdminDashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {services.map((svc) =>(
+                {services.map((svc) => (
                   <tr key={svc._id} className="border-b last:border-0">
                     <td className="p-3 font-medium">{svc.title}</td>
                     <td className="p-3">{svc.category}</td>
@@ -734,7 +734,7 @@ export function AdminDashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {appointments.map((appt) =>(
+                {appointments.map((appt) => (
                   <tr key={appt._id} className="border-b last:border-0">
                     <td className="p-3">
                       <p className="font-medium">{appt.customerName}</p>
@@ -786,28 +786,98 @@ export function AdminDashboardClient({
           </div>
 
           {selectedAppt && (
-            <div className="space-y-1.5 rounded-xl border bg-muted/30 p-5 text-sm">
-              <div className="flex justify-between">
-                <h3 className="font-semibold">Appointment Details</h3>
-                <button
-                  type="button"
-                  onClick={() => setSelectedAppt(null)}
-                  className="text-xs underline"
-                >
-                  Close
-                </button>
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+              onClick={() => setSelectedAppt(null)}
+            >
+              <div
+                className="w-full max-w-md space-y-4 rounded-xl border bg-card p-6 text-sm shadow-xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between border-b pb-3">
+                  <h3 className="text-base font-semibold">Appointment Details</h3>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAppt(null)}
+                    className="rounded-md border px-2.5 py-1 text-xs hover:bg-accent"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  {selectedAppt.serviceImage ? (
+                    <Image
+                      src={selectedAppt.serviceImage}
+                      alt={selectedAppt.serviceTitle}
+                      width={64}
+                      height={64}
+                      unoptimized
+                      className="h-16 w-16 rounded-lg border object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/15 text-lg font-bold text-primary">
+                      {selectedAppt.serviceTitle?.charAt(0).toUpperCase() || 'A'}
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-base font-semibold">{selectedAppt.serviceTitle}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedAppt.date} · {selectedAppt.startTime}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 rounded-lg border bg-muted/30 p-3.5">
+                  <p>
+                    <strong>Customer:</strong> {selectedAppt.customerName} ({selectedAppt.customerEmail})
+                  </p>
+                  <p>
+                    <strong>Price:</strong> ${(selectedAppt.servicePriceCents / 100).toFixed(2)}
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {selectedAppt.status}
+                  </p>
+                  <p>
+                    <strong>Payment:</strong> {selectedAppt.paymentStatus}
+                  </p>
+                  <p>
+                    <strong>Requested:</strong> {new Date(selectedAppt.createdAt).toLocaleString()}
+                  </p>
+                  <p>
+                    <strong>Customer Message:</strong>{' '}
+                    {selectedAppt.message || 'No additional message provided.'}
+                  </p>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  {selectedAppt.status === 'Pending' && (
+                    <button
+                      type="button"
+                      onClick={() => handleAppointmentDecision(selectedAppt._id, 'Confirmed')}
+                      className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                    >
+                      Confirm
+                    </button>
+                  )}
+                  {(selectedAppt.status === 'Pending' || selectedAppt.status === 'Confirmed') && (
+                    <button
+                      type="button"
+                      onClick={() => handleAppointmentDecision(selectedAppt._id, 'Cancelled')}
+                      className="rounded-md border border-destructive/50 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAppt(null)}
+                    className="rounded-md bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
-              <p>
-                <strong>Customer:</strong> {selectedAppt.customerName} ({selectedAppt.customerEmail})
-              </p>
-              <p>
-                <strong>Service:</strong> {selectedAppt.serviceTitle} ($
-                {(selectedAppt.servicePriceCents / 100).toFixed(2)})
-              </p>
-              <p>
-                <strong>Customer Message:</strong>{' '}
-                {selectedAppt.message || 'No additional message provided.'}
-              </p>
             </div>
           )}
         </div>
@@ -824,7 +894,7 @@ export function AdminDashboardClient({
                 </tr>
               </thead>
               <tbody>
-                {customers.map((cust) =>(
+                {customers.map((cust) => (
                   <tr key={cust._id} className="border-b last:border-0">
                     <td className="p-3 font-medium">{cust.name}</td>
                     <td className="p-3">{cust.email}</td>
