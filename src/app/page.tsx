@@ -13,7 +13,7 @@ const CATEGORIES = [
   'Spa & Massage',
 ];
 
-interface HomePageProps {
+interface HomePageProps{
   searchParams: Promise<{ canceled?: string }>;
 }
 
@@ -24,17 +24,17 @@ async function CheckoutBannerSection({
 }) {
   const { canceled } = await searchParams;
 
-  if (canceled) {
+  if (canceled){
     console.log(
       "Order canceled -- continue to shop around and check out when you're ready."
     );
   }
 
-  if (!canceled) {
+  if (!canceled){
     return null;
   }
 
-  return (
+  return(
     <div className="mt-6">
       <div className="inline-flex items-center gap-2 rounded-lg border border-amber-400/50 bg-amber-500/15 px-4 py-2.5 text-xs font-medium text-amber-200">
         <AlertCircle className="h-4 w-4 shrink-0" />
@@ -46,7 +46,7 @@ async function CheckoutBannerSection({
   );
 }
 
-export default function HomePage({ searchParams }: HomePageProps) {
+export default function HomePage({ searchParams }: HomePageProps){
   return (
     <div className="space-y-16 pb-16">
       {/* Banner Section */}
@@ -58,7 +58,7 @@ export default function HomePage({ searchParams }: HomePageProps) {
         />
         <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-center px-4 py-24 sm:px-6 lg:py-32">
           <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5" /> SalonBook Studio & Spa
+            <Sparkles className="h-3.5 w-3.5"/> SalonBook Studio & Spa
           </span>
           <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
             Crafted Hair, Radiant Skin & Calm Rituals
