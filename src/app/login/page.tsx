@@ -245,16 +245,55 @@ function LoginContent() {
     setSubmitting(true);
 
     try {
-      const { error } = await authClient.signIn.social({
-        provider: 'google',
-        callbackURL: `/auth/callback?callbackUrl=${encodeURIComponent(callbackUrl)}`,
+      // Use Express backend directly - form data parsing works on Vercel,
+      // while Better Auth /api/auth/ routes have JSON body parsing issues
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          email: email,
+          password: password,
+        }),
       });
-      if (error) {
-        const msg = error.message || 'Google login failed.';
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.success) {
+        const msg = data.message || 'Google login failed.';
         setErrorMsg(msg);
         toast({ title: 'Google login failed', description: msg, variant: 'destructive' });
         setSubmitting(false);
+        return;
       }
+
+      // After successful login, sync the session cookie and redirect
+      const syncRes = await fetch('/api/auth/session-token', {
+        cache: 'no-store',
+      }).catch(() => null);
+      const sessionToken = syncRes?.json?.success ? null : '';
+      
+      if (sessionToken) {
+        await fetch('/api/auth/sync-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionToken }),
+          cache: 'no-store',
+        }).catch(() => {});
+      }
+
+      setSuccessMsg('Signed in successfully!');
+      toast({
+        title: 'Welcome to SalonBook',
+        description: 'Your account is ready.',
+        variant: 'success',
+      });
+
+      const callbackUrl = 'dashboard/client';
+      const role = 'client';
+      window.location.replace(
+        role === 'admin'
+          ? '/dashboard/admin'
+          : '/dashboard/client'
+      );
     } catch (err) {
       const msg = (err as Error).message || 'Google login failed.';
       setErrorMsg(msg);
