@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const serverUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
+const serverUrl = (process.env.NEXT_PUBLIC_API_URL as string).replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,

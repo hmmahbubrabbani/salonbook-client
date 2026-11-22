@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 import { auth } from '@/lib/auth';
 import { getServerAuthUser } from '@/lib/server-auth';
 
-const SERVER_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+const SERVER_URL = (process.env.NEXT_PUBLIC_API_URL as string).replace(/\/$/, '');
 
 async function AuthCallbackResolver({
   searchParams,
