@@ -12,7 +12,7 @@ import { AVAILABLE_TIME_SLOTS, type Service, type UserRole } from '@/types/salon
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=80';
 
-interface ServerAuthUser {
+interface ServerAuthUser{
   _id: string;
   name: string;
   email: string;
@@ -25,7 +25,7 @@ function getApiUrl(path: string) {
   return base ? `${base}${path}` : path;
 }
 
-function ServiceDetailsContent() {
+function ServiceDetailsContent(){
   const params = useParams<{ id: string }>();
   const serviceId = params?.id;
   const pathname = usePathname();
@@ -62,18 +62,18 @@ function ServiceDetailsContent() {
     setAuthChecked(false);
     setServerUser(null);
 
-    const redirectToLogin = () => {
+    const redirectToLogin = () =>{
       const currentPath = pathname || (serviceId ? `/services/${serviceId}` : '/services');
       const targetLogin = `/login?callbackUrl=${encodeURIComponent(currentPath)}`;
       router.replace(targetLogin);
-      if (typeof window !== 'undefined') {
+      if (typeof window !== 'undefined'){
         window.location.replace(targetLogin);
       }
     };
 
     const sessionEmail = sessionData?.user?.email?.toLowerCase().trim() || '';
 
-    (async () => {
+    (async () =>{
       try {
         let user: ServerAuthUser | undefined;
 
@@ -83,7 +83,7 @@ function ServiceDetailsContent() {
           cache: 'no-store',
         });
 
-        if (meRes.ok) {
+        if (meRes.ok){
           const meData = await meRes.json().catch(() => ({}));
           if (meData?.success && meData?.user) {
             user = meData.user as ServerAuthUser;
@@ -100,7 +100,7 @@ function ServiceDetailsContent() {
             body: JSON.stringify({ email: sessionEmail }),
           });
 
-          if (syncRes.ok) {
+          if (syncRes.ok){
             const syncData = await syncRes.json().catch(() => ({}));
             if (syncData?.user) {
               user = syncData.user as ServerAuthUser;
@@ -110,7 +110,7 @@ function ServiceDetailsContent() {
 
         if (!active) return;
 
-        if (!user || user.isBlocked) {
+        if (!user || user.isBlocked){
           redirectToLogin();
           return;
         }
@@ -123,12 +123,12 @@ function ServiceDetailsContent() {
       }
     })();
 
-    return () => {
+    return () =>{
       active = false;
     };
   }, [isPending, sessionData?.user?.email, pathname, serviceId, router]);
 
-  useEffect(() => {
+  useEffect(() =>{
     if (!authChecked || !serverUser || serverUser.isBlocked || !serviceId) return;
 
     let active = true;
