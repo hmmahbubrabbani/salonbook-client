@@ -9,12 +9,12 @@ import { SERVICE_CATEGORIES, type Service } from '@/types/salonbook';
 
 const PAGE_SIZE = 6;
 
-function getServicesUrl() {
+function getServicesUrl(){
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}/api/v1/services` : '/api/v1/services';
 }
 
-function BrowseServicesInner() {
+function BrowseServicesInner(){
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'All';
 
@@ -39,14 +39,14 @@ function BrowseServicesInner() {
       credentials: 'include',
       cache: 'no-store',
     })
-      .then(async (res) => {
+      .then(async (res) =>{
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
           throw new Error(data.message || 'Failed to load salon services.');
         }
         return (Array.isArray(data.services) ? data.services : []) as Service[];
       })
-      .then((list) => {
+      .then((list) =>{
         if (!active) return;
         const normalizedActive = list
           .filter((s) => Boolean(s.isActive))
@@ -70,15 +70,15 @@ function BrowseServicesInner() {
         if (active) setLoading(false);
       });
 
-    return () => {
+    return () =>{
       active = false;
     };
   }, []);
 
-  const displayedServices = useMemo(() => {
+  const displayedServices = useMemo(() =>{
     const query = searchQuery.trim().toLowerCase();
 
-    const filtered = services.filter((service) => {
+    const filtered = services.filter((service) =>{
       const matchesName = !query || service.title.toLowerCase().includes(query);
       const matchesCategory =
         selectedCategory === 'All' ||
@@ -86,10 +86,10 @@ function BrowseServicesInner() {
       return matchesName && matchesCategory;
     });
 
-    if (sortByPrice === 'asc') {
+    if (sortByPrice === 'asc'){
       return [...filtered].sort((a, b) => a.priceCents - b.priceCents);
     }
-    if (sortByPrice === 'desc') {
+    if (sortByPrice === 'desc'){
       return [...filtered].sort((a, b) => b.priceCents - a.priceCents);
     }
     return filtered;
@@ -98,7 +98,7 @@ function BrowseServicesInner() {
   const totalPages = Math.max(1, Math.ceil(displayedServices.length / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
-  const paginatedServices = useMemo(() => {
+  const paginatedServices = useMemo(() =>{
     const startIndex = (safeCurrentPage - 1) * PAGE_SIZE;
     return displayedServices.slice(startIndex, startIndex + PAGE_SIZE);
   }, [displayedServices, safeCurrentPage]);
