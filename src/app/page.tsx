@@ -94,24 +94,24 @@ export default function HomePage({ searchParams }: HomePageProps){
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {CATEGORIES.map((category) => (
+          {CATEGORIES.map((category) =>(
             <Link
               key={category}
-              href={`/services?category=${encodeURIComponent(category)}`}
+              href={`/services?category=${encodeURIComponent(category)}` }
               className="group flex items-center justify-between rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm"
             >
               <span className="font-medium">{category}</span>
               <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
             </Link>
-          ))}
+          )) }
         </div>
       </section>
 
       {/* Additional Section: Signature Care & Bridal/Event Packages */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="rounded-2xl border bg-muted/40 p-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="rounded-2xl border bg-muted/40 p-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between" >
           <div className="space-y-2 max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary" >
               <Award className="h-4 w-4" /> Bespoke Salon Packages
             </span>
             <h2 className="text-2xl font-bold">Planning a Bridal, Party, or Makeover Session?</h2>
