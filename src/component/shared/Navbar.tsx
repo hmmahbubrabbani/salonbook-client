@@ -15,7 +15,7 @@ import {
 import { useSession, signOut } from '@/lib/auth-client';
 import { toast } from '@/hooks/use-toast';
 
-interface SessionUserWithMeta {
+interface SessionUserWithMeta{
   id?: string;
   _id?: string;
   name: string;
@@ -30,12 +30,12 @@ type ThemeMode = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'salonbook-theme';
 
-function getApiUrl(path: string) {
+function getApiUrl(path: string){
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}${path}` : path;
 }
 
-function getUserAvatar(user: SessionUserWithMeta | null | undefined) {
+function getUserAvatar(user: SessionUserWithMeta | null | undefined){
   return String(user?.avatarUrl || user?.image || '').trim();
 }
 
@@ -95,7 +95,7 @@ function UserAvatarBadge({
     setImgFailed(false);
   }, [avatarSrc]);
 
-  if (avatarSrc && !imgFailed) {
+  if (avatarSrc && !imgFailed){
     return (
       <img
         src={avatarSrc}
@@ -115,7 +115,7 @@ function UserAvatarBadge({
   );
 }
 
-export function Navbar() {
+export function Navbar(){
   const { data: session, isPending } = useSession();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -275,13 +275,13 @@ export function Navbar() {
         credentials: 'include',
       });
     } catch {
-      // Continue sign-out even if backend logout fails
+      
     }
 
     try {
       await signOut();
     } catch {
-      // Ignore Better Auth signOut error
+      
     }
 
     toast({
