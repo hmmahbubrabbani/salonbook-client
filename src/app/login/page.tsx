@@ -8,22 +8,22 @@ import { signIn, signOut, authClient, useSession } from '@/lib/auth-client';
 import { toast } from '@/hooks/use-toast';
 import type { UserRole } from '@/types/salonbook';
 
-function getApiUrl(path: string) {
+function getApiUrl(path: string){
   const base = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
   return base ? `${base}${path}` : path;
 }
 
-function resolveDestination(role: UserRole, callbackUrl: string) {
+function resolveDestination(role: UserRole, callbackUrl: string){
   if (role === 'admin') {
     return '/dashboard/admin';
   }
-  if (!callbackUrl.startsWith('/') || callbackUrl.startsWith('/dashboard/admin')) {
+  if (!callbackUrl.startsWith('/') || callbackUrl.startsWith('/dashboard/admin')){
     return '/dashboard/client';
   }
   return callbackUrl;
 }
 
-function LoginContent() {
+function LoginContent(){
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard/client';
   const { data: session, isPending } = useSession();
@@ -44,7 +44,7 @@ function LoginContent() {
     setSubmitting(false);
   }, []);
 
-  useEffect(() => {
+  useEffect(() =>{
     if (isPending || submitting) return;
 
     let active = true;
@@ -59,7 +59,7 @@ function LoginContent() {
 
         if (!active) return;
 
-        if (res.ok) {
+        if (res.ok){
           const data = await res.json().catch(() => null);
           if (data?.success && data?.user && !data.user.isBlocked) {
             const role = String(data.user.role || 'client').toLowerCase() as UserRole;
@@ -69,7 +69,7 @@ function LoginContent() {
           }
         }
 
-        if (session?.user?.email) {
+        if (session?.user?.email){
           const syncRes = await fetch(getApiUrl('/api/v1/auth/sync-session'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -84,7 +84,7 @@ function LoginContent() {
 
           if (!active) return;
 
-          if (syncRes.ok) {
+          if (syncRes.ok){
             const syncData = await syncRes.json().catch(() => null);
             if (syncData?.user && !syncData.user.isBlocked) {
               const role = String(syncData.user.role || 'client').toLowerCase() as UserRole;
@@ -94,14 +94,14 @@ function LoginContent() {
             }
           }
         }
-      } catch {
+      } catch{
         // Stay on login page when unauthenticated
       } finally {
         if (active) setCheckingSession(false);
       }
     })();
 
-    return () => {
+    return () =>{
       active = false;
     };
   }, [isPending, submitting, session?.user?.email, session?.user?.name, session?.user?.image, callbackUrl]);
